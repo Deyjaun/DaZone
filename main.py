@@ -5,33 +5,41 @@ from pprint import pprint as print
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import generate_password_hash, check_password_hash
 
-
-
-app = Flask(__name__)
-
-auth = HTTPBasicAuth()
-
 conn = pymysql.connect(
-  database = "dlawrence_todos",
+  database = "world",
   user = "dlawrence",
   password = "244557575",
   host = "10.100.33.60",
   cursorclass=pymysql.cursors.DictCursor
 )
 
-users = {
-    "Deyjaun": generate_password_hash("Sally"),
-    "susan": generate_password_hash("bye")
-}
+app = Flask(__name__)
 
-todolist=['Do youtube','Get money']
 
-@auth.verify_password
-def verify_password(username, password):
-    if username in users and \
-            check_password_hash(users.get(username), password):
-        return username
 
-@app.route('/', methods= ['GET','POST'] )
-@auth.login_required
-def index():
+auth = HTTPBasicAuth()
+
+@app.route('/')
+def index ():
+    return render_template("home.html.jinja")
+
+
+
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        # Do this for every input in your form
+        username = request.form["username"]
+        password = request.form["password"]
+        bio = request.form["bio"]
+        birthday = request.form["birthday"]
+
+
+        cursor = conn.cursor()
+        cursor.execute(f"INSERT INTO `user` (__PUT_COLUMNS_HERE__) VALUES ('{username}', '{password}', '{bio}')")
+        cursor.close()
+        conn.commit()
+    
+    return render_template("register.html.jinja")

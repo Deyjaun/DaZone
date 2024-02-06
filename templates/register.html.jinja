@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        # Do this for every input in your form
+        username = request.form["username"]
+        password = request.form["password"]
+        bio = request.form["bio"]
+        birthday = request.form["birthday"]
+
+
+        cursor = conn.cursor()
+        cursor.execute(f"INSERT INTO `user` (__PUT_COLUMNS_HERE__) VALUES ('{username}', '{password}', '{bio}')")
+        cursor.close()
+        conn.commit()
+    
+    return render_template("register.html.jinja")
+
+
+</html>
